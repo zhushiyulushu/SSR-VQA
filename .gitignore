@@ -1,0 +1,43 @@
+﻿# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Data and outputs
+data/
+datasets/
+outputs/
+runs/
+models/
+weights/
+checkpoints/
+
+# Large files
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.h5
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Local configs
+configs/paths_local.yaml
+configs/paths_autodl.yaml
+
+# OS
+.DS_Store
+Thumbs.db
