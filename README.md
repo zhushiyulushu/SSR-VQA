@@ -14,6 +14,8 @@ SSR follows a structured pipeline:
 4. Directional Structure Induction (DSI) for missing-region reasoning.
 5. Slot-based structured answer synthesis for controlled VQA queries.
 
+The repository contains the source code used for data processing, learnable grid completion, baseline evaluation, ablation studies, cross-domain evaluation, structured answer-quality evaluation, and visualization.
+
 ## Repository Structure
 
 ```text
@@ -26,7 +28,7 @@ requirements.txt    Python dependencies.
 README.md           Usage instructions.
 ```
 
-Large datasets, processed images, model checkpoints, and full output folders are not stored in this repository.
+Large datasets, processed images, model checkpoints, model weights, and full output folders are not stored in this repository.
 
 ## Environment Setup
 
@@ -38,7 +40,7 @@ conda activate ssr-vqa
 pip install -r requirements.txt
 ```
 
-The experiments were run on an AutoDL node with an NVIDIA RTX 3090 GPU.
+The main experiments were run on an AutoDL node with an NVIDIA RTX 3090 GPU.
 
 ## Data Preparation
 
@@ -55,24 +57,46 @@ data/
 
 The main experiments use SKU-110K with a controlled topological masking protocol. External Gap Detection subsets are used for cross-domain evaluation.
 
-## Main Experiments
+The controlled masking protocol constructs missing-object samples by removing annotated product boxes with sufficient neighboring context. The removed object boxes are retained as ground-truth missing regions. This enables structured missing-region localization and structured VQA reference construction without additional manual vacancy annotations.
 
-The full experiment pipeline includes:
+## Main Experimental Pipeline
+
+The complete experiment pipeline includes:
 
 1. Preparing controlled missing-object samples from SKU-110K.
 2. Training the learnable grid-completion branch.
-3. Evaluating localization baselines and SSR.
-4. Running cross-domain evaluation.
+3. Evaluating localization baselines and the full SSR model.
+4. Running cross-domain evaluation on Gap Detection subsets.
 5. Running ablation studies.
 6. Evaluating structured answer quality.
+7. Generating paper tables and figures.
 
-Please check the scripts under `scripts/` and modules under `src/` for the corresponding commands.
+Please check the scripts under `scripts/` and modules under `src/` for the corresponding implementation files.
+
+## Paper Result Files
+
+Small result files used in the paper are provided under:
+
+```text
+paper_results/tables/
+```
+
+Expected files include:
+
+```text
+table2_localization_final.csv
+table3_cross_domain_per_domain_final.csv
+table4_ablation_prf_final.csv
+table5_vqa_answer_quality_final_3seed.csv
+```
+
+These files summarize the main paper results. Full intermediate outputs are excluded from GitHub and should be stored separately in the experiment backup archive.
 
 ## Structured VQA Answer Quality Evaluation
 
 SKU-110K does not provide human-written VQA annotations. Therefore, structured VQA references are automatically constructed from the controlled topological masking protocol. Each reference answer is derived from the ground-truth missing region, row-column position, and neighboring structural context.
 
-Run the answer-quality evaluation for three independent runs:
+Run the structured answer-quality evaluation for three independent runs:
 
 ```bash
 for s in 42 2024 3407
@@ -93,28 +117,43 @@ The reported metrics include:
 
 BLEU-4 and CIDEr are not used because the generated answers are short structured responses rather than long free-form captions with multiple human-written references.
 
-## Paper Result Files
-
-Small result files are provided under:
+The final three-seed result is summarized in:
 
 ```text
-paper_results/tables/
+paper_results/tables/table5_vqa_answer_quality_final_3seed.csv
 ```
 
-Expected files include:
+## Main Paper Results
+
+The main localization comparison is summarized in:
 
 ```text
-table2_localization_final.csv
-table3_cross_domain_per_domain_final.csv
-table4_ablation_prf_final.csv
-table5_vqa_answer_quality_final_3seed.csv
+paper_results/tables/table2_localization_final.csv
 ```
 
-These files summarize the main paper results. Full intermediate outputs are excluded from GitHub and should be stored separately in the experiment backup archive.
+The cross-domain evaluation is summarized in:
+
+```text
+paper_results/tables/table3_cross_domain_per_domain_final.csv
+```
+
+The ablation study is summarized in:
+
+```text
+paper_results/tables/table4_ablation_prf_final.csv
+```
+
+The structured answer-quality evaluation is summarized in:
+
+```text
+paper_results/tables/table5_vqa_answer_quality_final_3seed.csv
+```
 
 ## Notes on Reproducibility
 
-To fully reproduce the experiments from scratch, users need to prepare the required datasets and follow the same preprocessing and masking protocol. For exact recovery of the original AutoDL experiment state, use the full recovery archive saved separately from this repository.
+To reproduce the experiments from scratch, users need to prepare the required datasets and follow the same preprocessing and masking protocol.
+
+This repository is designed for code release and paper-level reproducibility. It does not include the full 25GB AutoDL experiment snapshot. For exact recovery of the original AutoDL experiment state, the full local experiment directory or a full recovery archive is required. The separately saved paper-result archive contains the key paper tables, figures, selected result JSON files, answer-quality details, and environment records.
 
 ## Citation
 
